@@ -53,11 +53,7 @@
   <header class="topbar">
     <a class="home" href="index.html"><span>←</span> Hikarmory</a>
     <nav class="category-nav" aria-label="Shop categories">
-      <a data-category="gunpla" href="category.html?category=gunpla">Gunpla Kits</a>
-      <a data-category="figure" href="category.html?category=figure">Figure</a>
-      <a data-category="beyblade" href="category.html?category=beyblade">Beyblade</a>
-      <a data-category="tamiya" href="category.html?category=tamiya">Tamiya 4WD</a>
-      <a data-category="sanrio" href="category.html?category=sanrio">Sanrio</a>
+      <a class="active" href="category.html">Gunpla Kits</a>
     </nav>
   </header>
   <main>
@@ -73,20 +69,10 @@
   </main>
   <footer><span>Hikarmory Toy Shop · Bacolod City</span><span>Imported from Japan · Authentic only</span></footer>
   <script>
-    const categories = {
-      gunpla: { title:'Gunpla Kits', intro:'Authentic Japanese model kits selected for builders and collectors, from accessible builds to display-grade releases.', matches:['gunpla','model','model-kit'] },
-      figure: { title:'Figure', intro:'Japanese character figures chosen for sculpt, finish and shelf presence.', matches:['figure','figures'] },
-      beyblade: { title:'Beyblade', intro:'Beyblade releases and battle-ready parts sourced for players and collectors.', matches:['beyblade'] },
-      tamiya: { title:'Tamiya 4WD', intro:'Mini 4WD cars, kits and parts for building, tuning and racing.', matches:['tamiya','tamiya-4wd','mini-4wd'] },
-      sanrio: { title:'Sanrio', intro:'Sanrio characters and collectible pieces selected for cheerful, character-led displays.', matches:['sanrio'] }
-    };
-    const requested = new URLSearchParams(location.search).get('category');
-    const key = categories[requested] ? requested : 'gunpla';
-    const current = categories[key];
+    const current = { title:'Gunpla Kits', intro:'Authentic Japanese model kits selected for builders and collectors, from accessible builds to display-grade releases.', matches:['gunpla','model','model-kit'] };
     document.title = `${current.title} | Hikarmory`;
     document.querySelector('#categoryTitle').textContent = current.title;
     document.querySelector('#categoryIntro').textContent = current.intro;
-    document.querySelector(`[data-category="${key}"]`)?.classList.add('active');
     const escapeHTML = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
     const products = (() => { try { const data = JSON.parse(localStorage.getItem('hikarmory_products') || '[]'); return Array.isArray(data) ? data : []; } catch { return []; } })();
     const visible = products.filter(product => product.status === 'published' && current.matches.includes(String(product.category || '').toLowerCase()));
