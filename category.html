@@ -34,6 +34,7 @@
     .search { width:min(100%,430px); height:44px; padding:0 15px; border:1px solid #39383d; background:#111113; color:var(--paper); font:inherit; font-size:12px; }
     .search::placeholder { color:#69666b; }
     .stock-filter { display:flex; align-items:center; gap:9px; color:#918d92; font-size:10px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; white-space:nowrap; cursor:pointer; }
+    .stock-filter[hidden] { display:none; }
     .stock-filter input { accent-color:var(--red); }
     .products { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:42px 24px; margin-top:38px; }
     .product { min-width:0; position:relative; }
@@ -66,6 +67,7 @@
     <nav class="category-nav" aria-label="Shop categories">
       <a id="gunplaNav" href="category.html">Gunpla Kits</a>
       <a id="figureNav" href="category.html?catalog=figure">Figure</a>
+      <a id="beybladeNav" href="category.html?catalog=beyblade">Beyblade</a>
     </nav>
   </header>
   <main>
@@ -100,9 +102,22 @@
         searchPlaceholder:'Search figures',
         searchLabel:'Search figures',
         emptyTitle:'No matching figures.'
+      },
+      beyblade: {
+        title:'Beyblade',
+        intro:'Beyblade X Unique Line releases from Takara Tomy. Prices are listed in USD at twice the supplied Japanese retail price.',
+        heading:'Beyblade X / Unique Line',
+        data:'beyblade-products.json',
+        searchPlaceholder:'Search Beyblade',
+        searchLabel:'Search Beyblade',
+        emptyTitle:'No matching Beyblade products.',
+        currency:'USD',
+        locale:'en-US',
+        showStock:false
       }
     };
-    const catalogKey = new URLSearchParams(location.search).get('catalog') === 'figure' ? 'figure' : 'gunpla';
+    const requestedCatalog = new URLSearchParams(location.search).get('catalog');
+    const catalogKey = Object.hasOwn(catalogs, requestedCatalog) ? requestedCatalog : 'gunpla';
     const current = catalogs[catalogKey];
     document.title = `${current.title} | Hikarmory`;
     document.querySelector('#categoryTitle').textContent = current.title;
@@ -111,6 +126,7 @@
     document.querySelector('#productSearch').placeholder = current.searchPlaceholder;
     document.querySelector('#productSearch').setAttribute('aria-label', current.searchLabel);
     document.querySelector(`#${catalogKey}Nav`).classList.add('active');
+    if (current.showStock === false) document.querySelector('.stock-filter').hidden = true;
     const escapeHTML = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
     const grid = document.querySelector('#productGrid');
     const count = document.querySelector('#productCount');
@@ -119,14 +135,17 @@
     let products = [];
     const render = () => {
       const term = search.value.trim().toLocaleLowerCase();
-      const visible = products.filter(product => (!stockOnly.checked || product.stock > 0) && (!term || `${product.name} ${product.japaneseName} ${product.series}`.toLocaleLowerCase().includes(term)));
+      const visible = products.filter(product => (current.showStock === false || !stockOnly.checked || product.stock > 0) && (!term || `${product.name} ${product.japaneseName} ${product.series}`.toLocaleLowerCase().includes(term)));
       count.textContent = `${visible.length} of ${products.length} products`;
       if (!visible.length) { grid.innerHTML = `<div class="empty"><div><div class="empty-mark">◇</div><h2>${current.emptyTitle}</h2><p>Try a different search term or show sold-out products.</p></div></div>`; return; }
       grid.innerHTML = visible.map(product => {
+        const hasStock = current.showStock !== false;
         const stockText = product.stock > 1 ? `${product.stock} units available` : product.stock === 1 ? '1 unit available' : 'Sold out';
         const stockClass = product.stock === 0 ? 'sold' : product.stock <= 2 ? 'low' : '';
-        const price = product.price == null ? 'Price unavailable' : `PHP ${Number(product.price).toLocaleString('en-PH')}`;
-        return `<article class="product ${product.stock ? '' : 'sold-out'}">${product.imageSource ? `<a class="source-link" href="${escapeHTML(product.imageSource)}" target="_blank" rel="noreferrer" aria-label="View image source for ${escapeHTML(product.name)}">↗</a>` : ''}<div class="product-image"><img src="${escapeHTML(product.image)}" alt="${escapeHTML(product.name)}" loading="lazy"></div><div class="product-info"><div><h3>${escapeHTML(product.name)}</h3><p class="product-brand">${escapeHTML(product.series)}</p></div><span class="price">${price}</span><div class="stock ${stockClass}">${stockText}</div></div></article>`;
+        const currency = current.currency || 'PHP';
+        const locale = current.locale || 'en-PH';
+        const price = product.price == null ? 'Price unavailable' : currency === 'PHP' ? `PHP ${Number(product.price).toLocaleString(locale)}` : new Intl.NumberFormat(locale, { style:'currency', currency, minimumFractionDigits:2 }).format(Number(product.price));
+        return `<article class="product ${hasStock && !product.stock ? 'sold-out' : ''}">${product.imageSource ? `<a class="source-link" href="${escapeHTML(product.imageSource)}" target="_blank" rel="noreferrer" aria-label="View image source for ${escapeHTML(product.name)}">↗</a>` : ''}<div class="product-image"><img src="${escapeHTML(product.image)}" alt="${escapeHTML(product.name)}" loading="lazy"></div><div class="product-info"><div><h3>${escapeHTML(product.name)}</h3><p class="product-brand">${escapeHTML(product.series)}</p></div><span class="price">${price}</span>${hasStock ? `<div class="stock ${stockClass}">${stockText}</div>` : ''}</div></article>`;
       }).join('');
     };
     search.addEventListener('input', render);

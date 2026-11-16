@@ -1,0 +1,98 @@
+[
+  {
+    "id": "ux-20",
+    "name": "UX-20 Starter Glory Valkyrie LF",
+    "japaneseName": "UX-20 スターター グローリーワルキューレLF",
+    "series": "Beyblade X / Unique Line",
+    "price": 33.75,
+    "originalPriceJPY": 2700,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=%22UX-20%22+Beyblade+X+Starter+Glory+Valkyrie+LF+Takara+Tomy+official+product",
+    "image": "assets/beyblade/ux-20.webp"
+  },
+  {
+    "id": "ux-19",
+    "name": "UX-19 Starter Bullet Griffin H",
+    "japaneseName": "UX-19 スターター バレットグリフォンH",
+    "series": "Beyblade X / Unique Line",
+    "price": 32.5,
+    "originalPriceJPY": 2600,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=%22UX-19%22+Beyblade+X+Starter+Bullet+Griffin+H+Takara+Tomy+official+product",
+    "image": "assets/beyblade/ux-19.webp"
+  },
+  {
+    "id": "ux-01",
+    "name": "UX-01 Starter Dran Buster 1-60A",
+    "japaneseName": "UX-01 スターター ドランバスター1-60A",
+    "series": "Beyblade X / Unique Line",
+    "price": 24.75,
+    "originalPriceJPY": 1980,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=%22UX-01%22+Beyblade+X+Starter+Dran+Buster+1-60A+Takara+Tomy+official+product",
+    "image": "assets/beyblade/ux-01.webp"
+  },
+  {
+    "id": "ux-03",
+    "name": "UX-03 Booster Wizard Rod 5-70DB",
+    "japaneseName": "UX-03 ブースター ウィザードロッド5-70DB",
+    "series": "Beyblade X / Unique Line",
+    "price": 17.5,
+    "originalPriceJPY": 1400,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=%22UX-03%22+Beyblade+X+Booster+Wizard+Rod+5-70DB+Takara+Tomy+official+product",
+    "image": "assets/beyblade/ux-03.webp"
+  },
+  {
+    "id": "ux-08",
+    "name": "UX-08 Starter Silver Wolf 3-80FB",
+    "japaneseName": "UX-08 スターター シルバーウルフ3-80FB",
+    "series": "Beyblade X / Unique Line",
+    "price": 26.0,
+    "originalPriceJPY": 2080,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=%22UX-08%22+Beyblade+X+Starter+Silver+Wolf+3-80FB+Takara+Tomy+official+product",
+    "image": "assets/beyblade/ux-08.webp"
+  },
+  {
+    "id": "ux-11",
+    "name": "UX-11 Starter Impact Drake 9-60LR",
+    "japaneseName": "UX-11 スターター インパクトドレイク9-60LR",
+    "series": "Beyblade X / Unique Line",
+    "price": 30.25,
+    "originalPriceJPY": 2420,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=%22UX-11%22+Beyblade+X+Starter+Impact+Drake+9-60LR+Takara+Tomy+official+product",
+    "image": "assets/beyblade/ux-11.webp"
+  },
+  {
+    "id": "ux-14",
+    "name": "UX-14 Starter Scorpio Spear 0-70Z",
+    "japaneseName": "UX-14 スターター スコーピオスピア0-70Z",
+    "series": "Beyblade X / Unique Line",
+    "price": 27.5,
+    "originalPriceJPY": 2200,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=%22UX-14%22+Beyblade+X+Starter+Scorpio+Spear+0-70Z+Takara+Tomy+official+product",
+    "image": "assets/beyblade/ux-14.webp"
+  },
+  {
+    "id": "ux-17",
+    "name": "UX-17 Starter Meteo Dragoon 3-70J",
+    "japaneseName": "UX-17 スターター メテオドラグーン3-70J",
+    "series": "Beyblade X / Unique Line",
+    "price": 28.75,
+    "originalPriceJPY": 2300,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=%22UX-17%22+Beyblade+X+Starter+Meteo+Dragoon+3-70J+Takara+Tomy+official+product",
+    "image": "assets/beyblade/ux-17.webp"
+  }
+]
