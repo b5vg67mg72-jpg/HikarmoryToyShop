@@ -30,8 +30,13 @@
     .catalog-head { display:flex; justify-content:space-between; align-items:end; gap:24px; padding-bottom:18px; border-bottom:1px solid var(--line); }
     .catalog-head h2 { margin:0; font-size:12px; letter-spacing:1.8px; text-transform:uppercase; }
     .count { color:#777379; font-size:10px; letter-spacing:1.4px; text-transform:uppercase; }
+    .toolbar { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-top:22px; }
+    .search { width:min(100%,430px); height:44px; padding:0 15px; border:1px solid #39383d; background:#111113; color:var(--paper); font:inherit; font-size:12px; }
+    .search::placeholder { color:#69666b; }
+    .stock-filter { display:flex; align-items:center; gap:9px; color:#918d92; font-size:10px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; white-space:nowrap; cursor:pointer; }
+    .stock-filter input { accent-color:var(--red); }
     .products { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:42px 24px; margin-top:38px; }
-    .product { min-width:0; }
+    .product { min-width:0; position:relative; }
     .product-image { aspect-ratio:1; overflow:hidden; background:#1a1a1d; border:1px solid #303034; }
     .product-image img { width:100%; height:100%; display:block; object-fit:cover; filter:saturate(.9) brightness(.94); transition:transform .6s ease,filter .6s ease; }
     .product:hover .product-image img { transform:scale(1.035); filter:saturate(1) brightness(1); }
@@ -39,13 +44,19 @@
     .product h3 { margin:0; font-size:12px; line-height:1.45; letter-spacing:1px; text-transform:uppercase; }
     .product-brand { margin:0; color:#817d82; font-size:11px; }
     .price { grid-column:2; grid-row:1 / 3; font-size:12px; font-weight:600; }
+    .stock { grid-column:1 / -1; margin-top:5px; color:#8a858a; font-size:9px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; }
+    .stock.low { color:#d8a34a; }
+    .stock.sold { color:#766f74; }
+    .sold-out .product-image img { filter:grayscale(.65) brightness(.55); }
+    .source-link { position:absolute; right:10px; top:10px; z-index:2; display:grid; place-items:center; width:28px; height:28px; border:1px solid rgba(255,255,255,.25); background:rgba(11,11,12,.72); color:#ddd8d1; text-decoration:none; font-size:12px; opacity:0; transition:opacity .2s ease; }
+    .product:hover .source-link,.source-link:focus-visible { opacity:1; }
     .empty { grid-column:1 / -1; min-height:340px; display:grid; place-items:center; padding:50px 24px; text-align:center; border:1px solid var(--line); background:linear-gradient(135deg,#141416,#101011); }
     .empty-mark { color:var(--red); font-size:28px; }
     .empty h2 { margin:18px 0 12px; font-family:'Playfair Display',Georgia,serif; font-size:clamp(30px,4vw,50px); font-weight:600; }
     .empty p { max-width:470px; margin:0 auto 26px; color:#918d92; font-size:13px; line-height:1.7; }
     .empty a { display:inline-flex; padding:13px 17px; background:var(--red); text-decoration:none; font-size:10px; font-weight:700; letter-spacing:1.3px; text-transform:uppercase; }
     footer { padding:31px 5.5vw; display:flex; justify-content:space-between; gap:20px; border-top:1px solid #29292d; color:#625f64; font-size:9px; letter-spacing:1.2px; text-transform:uppercase; }
-    @media (max-width:850px) { .topbar { display:block; padding:0; } .home { display:block; padding:18px 20px 14px; border-bottom:1px solid rgba(255,255,255,.06); } .category-nav { justify-content:flex-start; gap:24px; padding:0 20px; } .category-nav a { padding:17px 0 15px; } .hero { padding:76px 20px 58px; } .catalog { padding:48px 20px 78px; } .products { grid-template-columns:repeat(2,minmax(0,1fr)); gap:30px 12px; } footer { padding:28px 20px; display:block; line-height:1.8; } }
+    @media (max-width:850px) { .topbar { display:block; padding:0; } .home { display:block; padding:18px 20px 14px; border-bottom:1px solid rgba(255,255,255,.06); } .category-nav { justify-content:flex-start; gap:24px; padding:0 20px; } .category-nav a { padding:17px 0 15px; } .hero { padding:76px 20px 58px; } .catalog { padding:48px 20px 78px; } .toolbar { align-items:flex-start; flex-direction:column; } .search { width:100%; } .products { grid-template-columns:repeat(2,minmax(0,1fr)); gap:30px 12px; } .source-link { opacity:1; } footer { padding:28px 20px; display:block; line-height:1.8; } }
     @media (max-width:460px) { h1 { font-size:50px; } .products { grid-template-columns:1fr; } }
   </style>
 </head>
@@ -63,7 +74,8 @@
       <p class="intro" id="categoryIntro">Authentic Japanese model kits selected for builders and collectors, from accessible builds to display-grade releases.</p>
     </section>
     <section class="catalog" aria-labelledby="catalogTitle">
-      <div class="catalog-head"><h2 id="catalogTitle">Available products</h2><span class="count" id="productCount">0 pieces</span></div>
+      <div class="catalog-head"><h2 id="catalogTitle">Plastic Model Kits</h2><span class="count" id="productCount">Loading products</span></div>
+      <div class="toolbar"><input class="search" id="productSearch" type="search" placeholder="Search model kits" aria-label="Search model kits"><label class="stock-filter"><input id="stockOnly" type="checkbox"> In stock only</label></div>
       <div class="products" id="productGrid"></div>
     </section>
   </main>
@@ -74,15 +86,26 @@
     document.querySelector('#categoryTitle').textContent = current.title;
     document.querySelector('#categoryIntro').textContent = current.intro;
     const escapeHTML = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-    const products = (() => { try { const data = JSON.parse(localStorage.getItem('hikarmory_products') || '[]'); return Array.isArray(data) ? data : []; } catch { return []; } })();
-    const visible = products.filter(product => product.status === 'published' && current.matches.includes(String(product.category || '').toLowerCase()));
-    document.querySelector('#productCount').textContent = `${visible.length} ${visible.length === 1 ? 'piece' : 'pieces'}`;
     const grid = document.querySelector('#productGrid');
-    if (!visible.length) {
-      grid.innerHTML = `<div class="empty"><div><div class="empty-mark">◇</div><h2>${escapeHTML(current.title)} arriving soon.</h2><p>New arrivals will appear here after stock and condition have been verified. Follow Hikarmory on Facebook for the next release.</p><a href="https://www.facebook.com/61584927274970/" target="_blank" rel="noreferrer">Follow on Facebook ↗</a></div></div>`;
-    } else {
-      grid.innerHTML = visible.map(product => `<article class="product"><div class="product-image"><img src="${escapeHTML(product.image || '')}" alt="${escapeHTML(product.name)}"></div><div class="product-info"><div><h3>${escapeHTML(product.name)}</h3><p class="product-brand">${escapeHTML(product.brand || product.series || 'Japanese import')}</p></div><span class="price">PHP ${Number(product.price || 0).toLocaleString('en-PH')}</span></div></article>`).join('');
-    }
+    const count = document.querySelector('#productCount');
+    const search = document.querySelector('#productSearch');
+    const stockOnly = document.querySelector('#stockOnly');
+    let products = [];
+    const render = () => {
+      const term = search.value.trim().toLocaleLowerCase();
+      const visible = products.filter(product => (!stockOnly.checked || product.stock > 0) && (!term || `${product.name} ${product.japaneseName} ${product.series}`.toLocaleLowerCase().includes(term)));
+      count.textContent = `${visible.length} of ${products.length} products`;
+      if (!visible.length) { grid.innerHTML = '<div class="empty"><div><div class="empty-mark">◇</div><h2>No matching model kits.</h2><p>Try a different search term or show sold-out products.</p></div></div>'; return; }
+      grid.innerHTML = visible.map(product => {
+        const stockText = product.stock > 1 ? `${product.stock} units available` : product.stock === 1 ? '1 unit available' : 'Sold out';
+        const stockClass = product.stock === 0 ? 'sold' : product.stock <= 2 ? 'low' : '';
+        const price = product.price == null ? 'Price unavailable' : `PHP ${Number(product.price).toLocaleString('en-PH')}`;
+        return `<article class="product ${product.stock ? '' : 'sold-out'}">${product.imageSource ? `<a class="source-link" href="${escapeHTML(product.imageSource)}" target="_blank" rel="noreferrer" aria-label="View image source for ${escapeHTML(product.name)}">↗</a>` : ''}<div class="product-image"><img src="${escapeHTML(product.image)}" alt="${escapeHTML(product.name)}" loading="lazy"></div><div class="product-info"><div><h3>${escapeHTML(product.name)}</h3><p class="product-brand">${escapeHTML(product.series)}</p></div><span class="price">${price}</span><div class="stock ${stockClass}">${stockText}</div></div></article>`;
+      }).join('');
+    };
+    search.addEventListener('input', render);
+    stockOnly.addEventListener('change', render);
+    fetch('gunpla-products.json').then(response => { if (!response.ok) throw new Error('Product data unavailable'); return response.json(); }).then(data => { products = data; render(); }).catch(() => { count.textContent = 'Products unavailable'; grid.innerHTML = '<div class="empty"><div><div class="empty-mark">◇</div><h2>Catalog unavailable.</h2><p>Please try again shortly.</p></div></div>'; });
   </script>
 </body>
 </html>
