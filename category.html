@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0b0c">
+  <meta name="description" content="Browse authentic Japanese collectibles from Hikarmory in Bacolod City.">
+  <title>Collection | Hikarmory</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+    :root { --ink:#0b0b0c; --panel:#141416; --paper:#f5f2ed; --muted:#969298; --red:#c51d29; --line:#302f33; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; min-height:100vh; background:var(--ink); color:var(--paper); font-family:'DM Sans',Arial,sans-serif; }
+    a { color:inherit; }
+    :focus-visible { outline:2px solid var(--red); outline-offset:4px; }
+    .topbar { min-height:72px; padding:0 5.5vw; display:flex; align-items:center; justify-content:space-between; gap:30px; position:sticky; top:0; z-index:5; background:rgba(11,11,12,.94); border-bottom:1px solid rgba(255,255,255,.08); backdrop-filter:blur(16px); }
+    .home { text-decoration:none; color:#ddd8d1; font-size:11px; font-weight:700; letter-spacing:1.7px; text-transform:uppercase; }
+    .home span { color:var(--red); margin-right:9px; }
+    .category-nav { display:flex; align-items:center; justify-content:flex-end; gap:28px; overflow-x:auto; scrollbar-width:none; }
+    .category-nav::-webkit-scrollbar { display:none; }
+    .category-nav a { position:relative; padding:27px 0 25px; text-decoration:none; color:#8f8b90; font-size:11px; font-weight:700; letter-spacing:1.25px; text-transform:uppercase; white-space:nowrap; }
+    .category-nav a:hover,.category-nav a.active { color:var(--paper); }
+    .category-nav a.active:after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--red); }
+    .hero { padding:105px 5.5vw 76px; border-bottom:1px solid var(--line); background:radial-gradient(circle at 75% 10%,rgba(197,29,41,.12),transparent 34%),linear-gradient(135deg,#161618,#0b0b0c 68%); }
+    .eyebrow { color:var(--red); font-size:10px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; }
+    h1 { margin:18px 0 20px; font-family:'Playfair Display',Georgia,serif; font-size:clamp(52px,8vw,112px); font-weight:600; line-height:.88; letter-spacing:-2px; }
+    .intro { max-width:570px; margin:0; color:#a7a2a6; font-size:14px; line-height:1.75; }
+    .catalog { padding:64px 5.5vw 110px; }
+    .catalog-head { display:flex; justify-content:space-between; align-items:end; gap:24px; padding-bottom:18px; border-bottom:1px solid var(--line); }
+    .catalog-head h2 { margin:0; font-size:12px; letter-spacing:1.8px; text-transform:uppercase; }
+    .count { color:#777379; font-size:10px; letter-spacing:1.4px; text-transform:uppercase; }
+    .products { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:42px 24px; margin-top:38px; }
+    .product { min-width:0; }
+    .product-image { aspect-ratio:1; overflow:hidden; background:#1a1a1d; border:1px solid #303034; }
+    .product-image img { width:100%; height:100%; display:block; object-fit:cover; filter:saturate(.9) brightness(.94); transition:transform .6s ease,filter .6s ease; }
+    .product:hover .product-image img { transform:scale(1.035); filter:saturate(1) brightness(1); }
+    .product-info { display:grid; grid-template-columns:1fr auto; gap:6px 14px; padding-top:15px; }
+    .product h3 { margin:0; font-size:12px; line-height:1.45; letter-spacing:1px; text-transform:uppercase; }
+    .product-brand { margin:0; color:#817d82; font-size:11px; }
+    .price { grid-column:2; grid-row:1 / 3; font-size:12px; font-weight:600; }
+    .empty { grid-column:1 / -1; min-height:340px; display:grid; place-items:center; padding:50px 24px; text-align:center; border:1px solid var(--line); background:linear-gradient(135deg,#141416,#101011); }
+    .empty-mark { color:var(--red); font-size:28px; }
+    .empty h2 { margin:18px 0 12px; font-family:'Playfair Display',Georgia,serif; font-size:clamp(30px,4vw,50px); font-weight:600; }
+    .empty p { max-width:470px; margin:0 auto 26px; color:#918d92; font-size:13px; line-height:1.7; }
+    .empty a { display:inline-flex; padding:13px 17px; background:var(--red); text-decoration:none; font-size:10px; font-weight:700; letter-spacing:1.3px; text-transform:uppercase; }
+    footer { padding:31px 5.5vw; display:flex; justify-content:space-between; gap:20px; border-top:1px solid #29292d; color:#625f64; font-size:9px; letter-spacing:1.2px; text-transform:uppercase; }
+    @media (max-width:850px) { .topbar { display:block; padding:0; } .home { display:block; padding:18px 20px 14px; border-bottom:1px solid rgba(255,255,255,.06); } .category-nav { justify-content:flex-start; gap:24px; padding:0 20px; } .category-nav a { padding:17px 0 15px; } .hero { padding:76px 20px 58px; } .catalog { padding:48px 20px 78px; } .products { grid-template-columns:repeat(2,minmax(0,1fr)); gap:30px 12px; } footer { padding:28px 20px; display:block; line-height:1.8; } }
+    @media (max-width:460px) { h1 { font-size:50px; } .products { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="home" href="index.html"><span>←</span> Hikarmory</a>
+    <nav class="category-nav" aria-label="Shop categories">
+      <a data-category="gunpla" href="category.html?category=gunpla">Gunpla Kits</a>
+      <a data-category="figure" href="category.html?category=figure">Figure</a>
+      <a data-category="beyblade" href="category.html?category=beyblade">Beyblade</a>
+      <a data-category="tamiya" href="category.html?category=tamiya">Tamiya 4WD</a>
+      <a data-category="sanrio" href="category.html?category=sanrio">Sanrio</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="eyebrow">Hikarmory / Collection</div>
+      <h1 id="categoryTitle">Gunpla Kits</h1>
+      <p class="intro" id="categoryIntro">Authentic Japanese model kits selected for builders and collectors, from accessible builds to display-grade releases.</p>
+    </section>
+    <section class="catalog" aria-labelledby="catalogTitle">
+      <div class="catalog-head"><h2 id="catalogTitle">Available products</h2><span class="count" id="productCount">0 pieces</span></div>
+      <div class="products" id="productGrid"></div>
+    </section>
+  </main>
+  <footer><span>Hikarmory Toy Shop · Bacolod City</span><span>Imported from Japan · Authentic only</span></footer>
+  <script>
+    const categories = {
+      gunpla: { title:'Gunpla Kits', intro:'Authentic Japanese model kits selected for builders and collectors, from accessible builds to display-grade releases.', matches:['gunpla','model','model-kit'] },
+      figure: { title:'Figure', intro:'Japanese character figures chosen for sculpt, finish and shelf presence.', matches:['figure','figures'] },
+      beyblade: { title:'Beyblade', intro:'Beyblade releases and battle-ready parts sourced for players and collectors.', matches:['beyblade'] },
+      tamiya: { title:'Tamiya 4WD', intro:'Mini 4WD cars, kits and parts for building, tuning and racing.', matches:['tamiya','tamiya-4wd','mini-4wd'] },
+      sanrio: { title:'Sanrio', intro:'Sanrio characters and collectible pieces selected for cheerful, character-led displays.', matches:['sanrio'] }
+    };
+    const requested = new URLSearchParams(location.search).get('category');
+    const key = categories[requested] ? requested : 'gunpla';
+    const current = categories[key];
+    document.title = `${current.title} | Hikarmory`;
+    document.querySelector('#categoryTitle').textContent = current.title;
+    document.querySelector('#categoryIntro').textContent = current.intro;
+    document.querySelector(`[data-category="${key}"]`)?.classList.add('active');
+    const escapeHTML = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    const products = (() => { try { const data = JSON.parse(localStorage.getItem('hikarmory_products') || '[]'); return Array.isArray(data) ? data : []; } catch { return []; } })();
+    const visible = products.filter(product => product.status === 'published' && current.matches.includes(String(product.category || '').toLowerCase()));
+    document.querySelector('#productCount').textContent = `${visible.length} ${visible.length === 1 ? 'piece' : 'pieces'}`;
+    const grid = document.querySelector('#productGrid');
+    if (!visible.length) {
+      grid.innerHTML = `<div class="empty"><div><div class="empty-mark">◇</div><h2>${escapeHTML(current.title)} arriving soon.</h2><p>New arrivals will appear here after stock and condition have been verified. Follow Hikarmory on Facebook for the next release.</p><a href="https://www.facebook.com/61584927274970/" target="_blank" rel="noreferrer">Follow on Facebook ↗</a></div></div>`;
+    } else {
+      grid.innerHTML = visible.map(product => `<article class="product"><div class="product-image"><img src="${escapeHTML(product.image || '')}" alt="${escapeHTML(product.name)}"></div><div class="product-info"><div><h3>${escapeHTML(product.name)}</h3><p class="product-brand">${escapeHTML(product.brand || product.series || 'Japanese import')}</p></div><span class="price">PHP ${Number(product.price || 0).toLocaleString('en-PH')}</span></div></article>`).join('');
+    }
+  </script>
+</body>
+</html>
