@@ -64,7 +64,8 @@
   <header class="topbar">
     <a class="home" href="index.html"><span>←</span> Hikarmory</a>
     <nav class="category-nav" aria-label="Shop categories">
-      <a class="active" href="category.html">Gunpla Kits</a>
+      <a id="gunplaNav" href="category.html">Gunpla Kits</a>
+      <a id="figureNav" href="category.html?catalog=figure">Figure</a>
     </nav>
   </header>
   <main>
@@ -81,10 +82,35 @@
   </main>
   <footer><span>Hikarmory Toy Shop · Bacolod City</span><span>Imported from Japan · Authentic only</span></footer>
   <script>
-    const current = { title:'Gunpla Kits', intro:'Authentic Japanese model kits selected for builders and collectors, from accessible builds to display-grade releases.', matches:['gunpla','model','model-kit'] };
+    const catalogs = {
+      gunpla: {
+        title:'Gunpla Kits',
+        intro:'Authentic Japanese model kits selected for builders and collectors, from accessible builds to display-grade releases.',
+        heading:'Plastic Model Kits',
+        data:'gunpla-products.json',
+        searchPlaceholder:'Search model kits',
+        searchLabel:'Search model kits',
+        emptyTitle:'No matching model kits.'
+      },
+      figure: {
+        title:'Figures',
+        intro:'Japanese character figures selected for sculpt, finish and shelf presence.',
+        heading:'Collectible Figures',
+        data:'figure-products.json',
+        searchPlaceholder:'Search figures',
+        searchLabel:'Search figures',
+        emptyTitle:'No matching figures.'
+      }
+    };
+    const catalogKey = new URLSearchParams(location.search).get('catalog') === 'figure' ? 'figure' : 'gunpla';
+    const current = catalogs[catalogKey];
     document.title = `${current.title} | Hikarmory`;
     document.querySelector('#categoryTitle').textContent = current.title;
     document.querySelector('#categoryIntro').textContent = current.intro;
+    document.querySelector('#catalogTitle').textContent = current.heading;
+    document.querySelector('#productSearch').placeholder = current.searchPlaceholder;
+    document.querySelector('#productSearch').setAttribute('aria-label', current.searchLabel);
+    document.querySelector(`#${catalogKey}Nav`).classList.add('active');
     const escapeHTML = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
     const grid = document.querySelector('#productGrid');
     const count = document.querySelector('#productCount');
@@ -95,7 +121,7 @@
       const term = search.value.trim().toLocaleLowerCase();
       const visible = products.filter(product => (!stockOnly.checked || product.stock > 0) && (!term || `${product.name} ${product.japaneseName} ${product.series}`.toLocaleLowerCase().includes(term)));
       count.textContent = `${visible.length} of ${products.length} products`;
-      if (!visible.length) { grid.innerHTML = '<div class="empty"><div><div class="empty-mark">◇</div><h2>No matching model kits.</h2><p>Try a different search term or show sold-out products.</p></div></div>'; return; }
+      if (!visible.length) { grid.innerHTML = `<div class="empty"><div><div class="empty-mark">◇</div><h2>${current.emptyTitle}</h2><p>Try a different search term or show sold-out products.</p></div></div>`; return; }
       grid.innerHTML = visible.map(product => {
         const stockText = product.stock > 1 ? `${product.stock} units available` : product.stock === 1 ? '1 unit available' : 'Sold out';
         const stockClass = product.stock === 0 ? 'sold' : product.stock <= 2 ? 'low' : '';
@@ -105,7 +131,7 @@
     };
     search.addEventListener('input', render);
     stockOnly.addEventListener('change', render);
-    fetch('gunpla-products.json').then(response => { if (!response.ok) throw new Error('Product data unavailable'); return response.json(); }).then(data => { products = data; render(); }).catch(() => { count.textContent = 'Products unavailable'; grid.innerHTML = '<div class="empty"><div><div class="empty-mark">◇</div><h2>Catalog unavailable.</h2><p>Please try again shortly.</p></div></div>'; });
+    fetch(current.data).then(response => { if (!response.ok) throw new Error('Product data unavailable'); return response.json(); }).then(data => { products = data; render(); }).catch(() => { count.textContent = 'Products unavailable'; grid.innerHTML = '<div class="empty"><div><div class="empty-mark">◇</div><h2>Catalog unavailable.</h2><p>Please try again shortly.</p></div></div>'; });
   </script>
 </body>
 </html>
