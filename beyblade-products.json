@@ -94,5 +94,77 @@
     "exchangeRateJPYToUSD": 0.0062501,
     "imageSource": "https://www.bing.com/images/search?q=%22UX-17%22+Beyblade+X+Starter+Meteo+Dragoon+3-70J+Takara+Tomy+official+product",
     "image": "assets/beyblade/ux-17.webp"
+  },
+  {
+    "id": "bx-49",
+    "name": "BX-49 Starter Dran Strike 4-50FF",
+    "japaneseName": "BX-49 スターター ドランストライク4-50FF",
+    "series": "Beyblade X / Basic Line",
+    "price": 27.5,
+    "originalPriceJPY": 2200,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=BX-49+Dran+Strike+4-50FF+Beyblade+X+Takara+Tomy",
+    "image": "assets/beyblade/bx-49.webp"
+  },
+  {
+    "id": "bx-50",
+    "name": "BX-50 Random Booster Heaven's Ring 0-8DS",
+    "japaneseName": "BX-50 ランダムブースター ヘブンズリング0-8-DS",
+    "series": "Beyblade X / Basic Line",
+    "price": 20.0,
+    "originalPriceJPY": 1600,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=BX-50+Heaven%27s+Ring+0-8DS+Beyblade+X+Takara+Tomy",
+    "image": "assets/beyblade/bx-50.webp"
+  },
+  {
+    "id": "bx-34",
+    "name": "BX-34 Starter Cobalt Dragoon 2-60C",
+    "japaneseName": "BX-34 スターター コバルトドラグーン2-60C",
+    "series": "Beyblade X / Basic Line",
+    "price": 29.01,
+    "originalPriceJPY": 2321,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=BX-34+Cobalt+Dragoon+2-60C+Beyblade+X+Takara+Tomy",
+    "image": "assets/beyblade/bx-34.webp"
+  },
+  {
+    "id": "bx-23",
+    "name": "BX-23 Starter Phoenix Wing 9-60GF",
+    "japaneseName": "BX-23 スターター フェニックスウイング9-60GF",
+    "series": "Beyblade X / Basic Line",
+    "price": 30.25,
+    "originalPriceJPY": 2420,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=BX-23+Phoenix+Wing+9-60GF+Beyblade+X+Takara+Tomy",
+    "image": "assets/beyblade/bx-23.webp"
+  },
+  {
+    "id": "bx-44",
+    "name": "BX-44 Booster Tricera Press M-85BS",
+    "japaneseName": "BX-44 ブースター トリケラプレスM-85BS",
+    "series": "Beyblade X / Basic Line",
+    "price": 18.75,
+    "originalPriceJPY": 1500,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=BX-44+Tricera+Press+M-85BS+Beyblade+X+Takara+Tomy",
+    "image": "assets/beyblade/bx-44.webp"
+  },
+  {
+    "id": "bx-45",
+    "name": "BX-45 Booster Samurai Calibur 6-70M",
+    "japaneseName": "BX-45 ブースター サムライカリバー6-70M",
+    "series": "Beyblade X / Basic Line",
+    "price": 18.75,
+    "originalPriceJPY": 1500,
+    "priceMultiplier": 2,
+    "exchangeRateJPYToUSD": 0.0062501,
+    "imageSource": "https://www.bing.com/images/search?q=BX-45+Samurai+Calibur+6-70M+Beyblade+X+Takara+Tomy",
+    "image": "assets/beyblade/bx-45.webp"
   }
 ]
