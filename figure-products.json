@@ -1138,6 +1138,7 @@
     "price": 1100,
     "stock": 1,
     "sourceRows": [
+      213,
       502
     ],
     "imageSource": "https://www.bing.com/images/search?q=%22BANPRESTO+SAKAMOTO+DAYS+VIBRATION+STARS+NATSUKI+SEBA%22+official+collectible+figure+product+image",
@@ -1652,6 +1653,8 @@
       478,
       526,
       527,
+      528,
+      792,
       1122,
       1123
     ],
@@ -1671,21 +1674,6 @@
     ],
     "imageSource": "https://www.bing.com/images/search?q=%22EPOCH+Sylvanian+Families+B-41%22+official+collectible+figure+product+image",
     "image": "assets/figures/epoch-sylvanian-families-b-41.webp"
-  },
-  {
-    "id": "epoch-sylvanian-families-n-108",
-    "name": "EPOCH Sylvanian Families N-108",
-    "japaneseName": "エポック シルバニアファミリー ネ-108 マシュマロネズミのみつごちゃん",
-    "series": "シルバニアファミリー",
-    "sku": "JS-1381-052626-15",
-    "price": 580,
-    "stock": 2,
-    "sourceRows": [
-      528,
-      792
-    ],
-    "imageSource": "https://www.bing.com/images/search?q=%22EPOCH+Sylvanian+Families+N-108%22+official+collectible+figure+product+image",
-    "image": "assets/figures/epoch-sylvanian-families-n-108.webp"
   },
   {
     "id": "epoch-sylvanian-families-n-89",
@@ -3589,20 +3577,6 @@
     ],
     "imageSource": "https://www.bing.com/images/search?q=%22BANPRESTO+SAKAMOTO+DAYS+SAKAMOTO+TARO+Figure%22+official+collectible+figure+product+image",
     "image": "assets/figures/banpresto-sakamoto-days-sakamoto-taro-figure.webp"
-  },
-  {
-    "id": "banpresto-sakamoto-days-vibratio-stars-natsuki-seba",
-    "name": "BANPRESTO SAKAMOTO DAYS VIBRATIO STARS NATSUKI SEBA",
-    "japaneseName": "バンプレスト サカモトデイズ VIBRATIO STARS 勢羽夏生",
-    "series": "サカモトデイズ",
-    "sku": "HO-5667-020726-6",
-    "price": 1100,
-    "stock": 0,
-    "sourceRows": [
-      213
-    ],
-    "imageSource": "https://www.bing.com/images/search?q=%22BANPRESTO+SAKAMOTO+DAYS+VIBRATIO+STARS+NATSUKI+SEBA%22+official+collectible+figure+product+image",
-    "image": "assets/figures/banpresto-sakamoto-days-vibratio-stars-natsuki-seba.webp"
   },
   {
     "id": "banpresto-sakamoto-days-vibratio-stars-osaragi",
