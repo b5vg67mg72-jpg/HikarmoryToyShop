@@ -39,8 +39,8 @@
     .products { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:42px 24px; margin-top:38px; }
     .product { min-width:0; position:relative; }
     .product-image { aspect-ratio:1; overflow:hidden; display:grid; place-items:center; background:#f2f0eb; border:1px solid #d8d4cd; }
-    .product-image img { width:100%; height:100%; display:block; object-fit:contain; background:#f2f0eb; transform:translate(var(--image-x,0),var(--image-y,0)) scale(var(--image-scale,1)); transition:transform .6s ease; }
-    .product:hover .product-image img { transform:translate(var(--image-hover-x,var(--image-x,0)),var(--image-hover-y,var(--image-y,0))) scale(var(--image-hover-scale,1.025)); }
+    .product-image img { width:100%; height:100%; display:block; object-fit:contain; background:#f2f0eb; transition:transform .6s ease; }
+    .product:hover .product-image img { transform:scale(1.025); }
     .product-info { display:grid; grid-template-columns:1fr auto; gap:6px 14px; padding-top:15px; }
     .product h3 { margin:0; font-size:12px; line-height:1.45; letter-spacing:1px; text-transform:uppercase; }
     .product-brand { margin:0; color:#817d82; font-size:11px; }
@@ -133,41 +133,6 @@
     const search = document.querySelector('#productSearch');
     const stockOnly = document.querySelector('#stockOnly');
     let products = [];
-    const fitProductImage = image => {
-      const measure = () => {
-        if (!image.naturalWidth) return;
-        const size = 96;
-        const canvas = document.createElement('canvas');
-        canvas.width = canvas.height = size;
-        const context = canvas.getContext('2d', { willReadFrequently:true });
-        context.drawImage(image, 0, 0, size, size);
-        const pixels = context.getImageData(0, 0, size, size).data;
-        const corners = [[0,0],[size-1,0],[0,size-1],[size-1,size-1]];
-        const background = [0,1,2].map(channel => Math.round(corners.reduce((sum,[x,y]) => sum + pixels[(y * size + x) * 4 + channel], 0) / corners.length));
-        const rows = new Uint16Array(size);
-        const columns = new Uint16Array(size);
-        for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
-          const offset = (y * size + x) * 4;
-          const different = Math.max(Math.abs(pixels[offset] - background[0]), Math.abs(pixels[offset + 1] - background[1]), Math.abs(pixels[offset + 2] - background[2])) > 22;
-          if (different) { rows[y]++; columns[x]++; }
-        }
-        const xs = [...columns.keys()].filter(index => columns[index] > 1);
-        const ys = [...rows.keys()].filter(index => rows[index] > 1);
-        if (!xs.length || !ys.length) return;
-        const left = xs[0], right = xs.at(-1) + 1, top = ys[0], bottom = ys.at(-1) + 1;
-        const contentRatio = Math.max((right - left) / size, (bottom - top) / size);
-        const scale = Math.min(1.75, Math.max(1, .86 / contentRatio));
-        const hoverScale = scale * 1.025;
-        const centerX = (left + right) / (2 * size), centerY = (top + bottom) / (2 * size);
-        image.style.setProperty('--image-scale', scale.toFixed(3));
-        image.style.setProperty('--image-hover-scale', hoverScale.toFixed(3));
-        image.style.setProperty('--image-x', `${((.5 - centerX) * scale * 100).toFixed(2)}%`);
-        image.style.setProperty('--image-y', `${((.5 - centerY) * scale * 100).toFixed(2)}%`);
-        image.style.setProperty('--image-hover-x', `${((.5 - centerX) * hoverScale * 100).toFixed(2)}%`);
-        image.style.setProperty('--image-hover-y', `${((.5 - centerY) * hoverScale * 100).toFixed(2)}%`);
-      };
-      if (image.complete) measure(); else image.addEventListener('load', measure, { once:true });
-    };
     const render = () => {
       const term = search.value.trim().toLocaleLowerCase();
       const visible = products.filter(product => (current.showStock === false || !stockOnly.checked || product.stock > 0) && (!term || `${product.name} ${product.japaneseName} ${product.series}`.toLocaleLowerCase().includes(term)));
@@ -182,7 +147,6 @@
         const price = product.price == null ? 'Price unavailable' : currency === 'PHP' ? `PHP ${Number(product.price).toLocaleString(locale)}` : new Intl.NumberFormat(locale, { style:'currency', currency, minimumFractionDigits:2 }).format(Number(product.price));
         return `<article class="product ${hasStock && !product.stock ? 'sold-out' : ''}">${product.imageSource ? `<a class="source-link" href="${escapeHTML(product.imageSource)}" target="_blank" rel="noreferrer" aria-label="View image source for ${escapeHTML(product.name)}">↗</a>` : ''}<div class="product-image"><img src="${escapeHTML(product.image)}" alt="${escapeHTML(product.name)}" loading="lazy"></div><div class="product-info"><div><h3>${escapeHTML(product.name)}</h3><p class="product-brand">${escapeHTML(product.series)}</p></div><span class="price">${price}</span>${hasStock ? `<div class="stock ${stockClass}">${stockText}</div>` : ''}</div></article>`;
       }).join('');
-      grid.querySelectorAll('.product-image img').forEach(fitProductImage);
     };
     search.addEventListener('input', render);
     stockOnly.addEventListener('change', render);
