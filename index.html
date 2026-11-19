@@ -103,9 +103,9 @@
     .product { min-width:0; position:relative; }
     .product:hover .art { border-color:#77737a; }
     .art { aspect-ratio:1 / 1; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#202023; border:1px solid #39393d; transition:border-color .35s ease; }
-    .art.real-product { background:#1a1a1d; border-color:#303034; }
+    .art.real-product { background:#f2f0eb; border-color:#d8d4cd; }
     .art.real-product:before,.art.real-product:after { display:none; }
-    .art.real-product img { width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.88) contrast(1.04) brightness(.92); transition:transform .7s cubic-bezier(.2,.7,.2,1),filter .7s ease; }
+    .art.real-product img { width:100%; height:100%; padding:8%; object-fit:contain; display:block; background:#f2f0eb; transition:transform .7s cubic-bezier(.2,.7,.2,1); }
     .product:hover .art.real-product img { transform:scale(1.035); filter:saturate(1) contrast(1.04) brightness(1); }
     .art:before { content:""; width:128px; height:156px; border:4px solid #151518; box-shadow:11px 11px 0 rgba(16,17,19,.18); transform:rotate(-5deg); }
     .art:after { position:absolute; font-size:13px; font-weight:900; text-transform:uppercase; transform:rotate(-5deg); }
