@@ -105,8 +105,8 @@
     .art { aspect-ratio:1 / 1; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#202023; border:1px solid #39393d; transition:border-color .35s ease; }
     .art.real-product { background:#f2f0eb; border-color:#d8d4cd; }
     .art.real-product:before,.art.real-product:after { display:none; }
-    .art.real-product img { width:100%; height:100%; padding:8%; object-fit:contain; display:block; background:#f2f0eb; transition:transform .7s cubic-bezier(.2,.7,.2,1); }
-    .product:hover .art.real-product img { transform:scale(1.035); filter:saturate(1) contrast(1.04) brightness(1); }
+    .art.real-product img { width:100%; height:100%; object-fit:contain; display:block; background:#f2f0eb; transform:translate(var(--image-x,0),var(--image-y,0)) scale(var(--image-scale,1)); transition:transform .7s cubic-bezier(.2,.7,.2,1); }
+    .product:hover .art.real-product img { transform:translate(var(--image-hover-x,var(--image-x,0)),var(--image-hover-y,var(--image-y,0))) scale(var(--image-hover-scale,1.025)); }
     .art:before { content:""; width:128px; height:156px; border:4px solid #151518; box-shadow:11px 11px 0 rgba(16,17,19,.18); transform:rotate(-5deg); }
     .art:after { position:absolute; font-size:13px; font-weight:900; text-transform:uppercase; transform:rotate(-5deg); }
     .a1 { background:#64161d; } .a1:before { border-radius:50% 50% 12px 12px; background:#d31f2b; } .a1:after { content:'ONE PIECE'; color:var(--paper); }
@@ -179,6 +179,29 @@
     const grid = document.querySelector('#productGrid');
     const count = document.querySelector('#collectionCount');
     const escapeHTML = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    const fitProductImage = image => {
+      const measure = () => {
+        if (!image.naturalWidth) return;
+        const size = 96, canvas = document.createElement('canvas');
+        canvas.width = canvas.height = size;
+        const context = canvas.getContext('2d', { willReadFrequently:true });
+        context.drawImage(image, 0, 0, size, size);
+        const pixels = context.getImageData(0, 0, size, size).data;
+        const corners = [[0,0],[size-1,0],[0,size-1],[size-1,size-1]];
+        const background = [0,1,2].map(channel => Math.round(corners.reduce((sum,[x,y]) => sum + pixels[(y * size + x) * 4 + channel], 0) / corners.length));
+        const rows = new Uint16Array(size), columns = new Uint16Array(size);
+        for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) { const offset = (y * size + x) * 4; if (Math.max(Math.abs(pixels[offset] - background[0]),Math.abs(pixels[offset + 1] - background[1]),Math.abs(pixels[offset + 2] - background[2])) > 22) { rows[y]++; columns[x]++; } }
+        const xs = [...columns.keys()].filter(index => columns[index] > 1), ys = [...rows.keys()].filter(index => rows[index] > 1);
+        if (!xs.length || !ys.length) return;
+        const left = xs[0], right = xs.at(-1) + 1, top = ys[0], bottom = ys.at(-1) + 1;
+        const scale = Math.min(1.75, Math.max(1, .86 / Math.max((right - left) / size, (bottom - top) / size))), hoverScale = scale * 1.025;
+        const centerX = (left + right) / (2 * size), centerY = (top + bottom) / (2 * size);
+        image.style.setProperty('--image-scale',scale.toFixed(3)); image.style.setProperty('--image-hover-scale',hoverScale.toFixed(3));
+        image.style.setProperty('--image-x',`${((.5-centerX)*scale*100).toFixed(2)}%`); image.style.setProperty('--image-y',`${((.5-centerY)*scale*100).toFixed(2)}%`);
+        image.style.setProperty('--image-hover-x',`${((.5-centerX)*hoverScale*100).toFixed(2)}%`); image.style.setProperty('--image-hover-y',`${((.5-centerY)*hoverScale*100).toFixed(2)}%`);
+      };
+      if (image.complete) measure(); else image.addEventListener('load',measure,{ once:true });
+    };
     const readProducts = () => { try { const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); return Array.isArray(data) ? data : []; } catch { return []; } };
     const published = readProducts().filter(product => product.status === 'published');
     const emptyState = '<div class="catalog-empty"><div><div class="empty-index">01</div><h3>Collection in preparation.</h3><p>New Japanese arrivals will appear here once they have been verified and released by Hikarmory. Follow Facebook for the next drop.</p></div></div>';
@@ -188,6 +211,7 @@
       count.textContent = `${published.length} published ${published.length === 1 ? 'piece' : 'pieces'}`;
       if (!visible.length) { grid.innerHTML = emptyState; return; }
       grid.innerHTML = visible.map(product => `<article class="product" data-type="${escapeHTML(product.category)}"><div class="art real-product"><img src="${escapeHTML(product.image || '')}" alt="${escapeHTML(product.name)}" loading="lazy"></div><div class="product-info"><div><h3>${escapeHTML(product.name)}</h3><p>${escapeHTML(product.brand || product.series || 'Japanese import')}</p></div><span class="price">PHP ${Number(product.price || 0).toLocaleString('en-PH')}</span><div class="product-meta"><span>${escapeHTML(product.sku || 'HIKARMORY')} · ${escapeHTML(product.category)}</span><span>Authentic import</span></div></div></article>`).join('');
+      grid.querySelectorAll('.art.real-product img').forEach(fitProductImage);
     };
     const filters = document.querySelectorAll('.filter');
     filters.forEach((button, index) => { button.setAttribute('aria-pressed', index === 0 ? 'true' : 'false'); button.addEventListener('click', () => { document.querySelector('.filter.active')?.classList.remove('active'); filters.forEach(item => item.setAttribute('aria-pressed','false')); button.classList.add('active'); button.setAttribute('aria-pressed','true'); renderProducts(button.dataset.filter); }); });
