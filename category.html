@@ -12,6 +12,7 @@
     * { box-sizing:border-box; }
     html { scroll-behavior:smooth; }
     body { margin:0; min-height:100vh; background:var(--ink); color:var(--paper); font-family:'DM Sans',Arial,sans-serif; }
+    body.cart-open { overflow:hidden; }
     a { color:inherit; }
     :focus-visible { outline:2px solid var(--red); outline-offset:4px; }
     .topbar { min-height:72px; padding:0 5.5vw; display:flex; align-items:center; justify-content:space-between; gap:30px; position:sticky; top:0; z-index:5; background:rgba(11,11,12,.94); border-bottom:1px solid rgba(255,255,255,.08); backdrop-filter:blur(16px); }
@@ -22,6 +23,10 @@
     .category-nav a { position:relative; padding:27px 0 25px; text-decoration:none; color:#8f8b90; font-size:11px; font-weight:700; letter-spacing:1.25px; text-transform:uppercase; white-space:nowrap; }
     .category-nav a:hover,.category-nav a.active { color:var(--paper); }
     .category-nav a.active:after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--red); }
+    .nav-actions { display:flex; align-items:center; gap:24px; }
+    .cart-trigger { border:1px solid #4a474c; background:transparent; color:var(--paper); min-height:38px; padding:0 13px; font:inherit; font-size:10px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; cursor:pointer; white-space:nowrap; }
+    .cart-trigger:hover { border-color:var(--paper); }
+    .cart-count { display:inline-grid; place-items:center; min-width:19px; height:19px; margin-left:7px; padding:0 5px; border-radius:20px; background:var(--red); color:#fff; font-size:9px; }
     .hero { padding:105px 5.5vw 76px; border-bottom:1px solid var(--line); background:radial-gradient(circle at 75% 10%,rgba(197,29,41,.12),transparent 34%),linear-gradient(135deg,#161618,#0b0b0c 68%); }
     .eyebrow { color:var(--red); font-size:10px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; }
     h1 { margin:18px 0 20px; font-family:'Playfair Display',Georgia,serif; font-size:clamp(52px,8vw,112px); font-weight:600; line-height:.88; letter-spacing:-2px; }
@@ -45,6 +50,8 @@
     .product h3 { margin:0; font-size:12px; line-height:1.45; letter-spacing:1px; text-transform:uppercase; }
     .product-brand { margin:0; color:#817d82; font-size:11px; }
     .price { grid-column:2; grid-row:1 / 3; font-size:12px; font-weight:600; }
+    .add-to-cart { grid-column:1 / -1; min-height:40px; margin-top:9px; border:1px solid #454348; background:transparent; color:var(--paper); font:inherit; font-size:10px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; cursor:pointer; }
+    .add-to-cart:hover,.add-to-cart:focus-visible { border-color:var(--red); background:var(--red); }
     .stock { grid-column:1 / -1; margin-top:5px; color:#8a858a; font-size:9px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; }
     .stock.low { color:#d8a34a; }
     .stock.sold { color:#766f74; }
@@ -56,19 +63,52 @@
     .empty h2 { margin:18px 0 12px; font-family:'Playfair Display',Georgia,serif; font-size:clamp(30px,4vw,50px); font-weight:600; }
     .empty p { max-width:470px; margin:0 auto 26px; color:#918d92; font-size:13px; line-height:1.7; }
     .empty a { display:inline-flex; padding:13px 17px; background:var(--red); text-decoration:none; font-size:10px; font-weight:700; letter-spacing:1.3px; text-transform:uppercase; }
+    .cart-overlay { position:fixed; inset:0; z-index:19; background:rgba(0,0,0,.64); opacity:0; pointer-events:none; transition:opacity .25s ease; }
+    .cart-overlay.open { opacity:1; pointer-events:auto; }
+    .cart-drawer { position:fixed; z-index:20; top:0; right:0; width:min(100%,460px); height:100dvh; display:flex; flex-direction:column; background:#111113; border-left:1px solid var(--line); transform:translateX(100%); transition:transform .3s ease; box-shadow:-24px 0 70px rgba(0,0,0,.42); }
+    .cart-drawer.open { transform:translateX(0); }
+    .cart-head { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:21px 22px; border-bottom:1px solid var(--line); }
+    .cart-head h2 { margin:0; font-family:'Playfair Display',Georgia,serif; font-size:28px; }
+    .cart-close { width:40px; height:40px; border:1px solid #454348; background:transparent; color:var(--paper); font-size:20px; cursor:pointer; }
+    .cart-body { flex:1; overflow:auto; padding:0 22px 30px; }
+    .cart-empty { padding:54px 0; color:#918d92; text-align:center; font-size:13px; line-height:1.7; }
+    .cart-item { display:grid; grid-template-columns:72px 1fr auto; gap:13px; padding:20px 0; border-bottom:1px solid var(--line); }
+    .cart-item img { width:72px; height:72px; object-fit:contain; background:#f2f0eb; }
+    .cart-item h3 { margin:0 0 5px; font-size:11px; line-height:1.45; text-transform:uppercase; }
+    .cart-item-price { color:#aaa6aa; font-size:11px; }
+    .quantity { display:flex; align-items:center; gap:9px; margin-top:11px; }
+    .quantity button { width:28px; height:28px; border:1px solid #454348; background:transparent; color:var(--paper); cursor:pointer; }
+    .quantity span { min-width:18px; text-align:center; font-size:11px; }
+    .remove-item { align-self:start; border:0; background:transparent; color:#8d888d; font:inherit; font-size:17px; cursor:pointer; }
+    .cart-summary { display:flex; justify-content:space-between; gap:20px; padding:22px 0; font-size:13px; font-weight:700; }
+    .checkout { border-top:1px solid var(--line); padding-top:23px; }
+    .checkout h3 { margin:0 0 7px; font-size:12px; letter-spacing:1.3px; text-transform:uppercase; }
+    .checkout-note { margin:0 0 18px; color:#8e898e; font-size:11px; line-height:1.55; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .field { display:grid; gap:6px; }
+    .field.full { grid-column:1 / -1; }
+    .field label { color:#aaa6aa; font-size:9px; font-weight:700; letter-spacing:1.1px; text-transform:uppercase; }
+    .field input,.field select,.field textarea { width:100%; border:1px solid #39383d; border-radius:0; background:#171719; color:var(--paper); padding:11px 12px; font:inherit; font-size:12px; }
+    .field textarea { min-height:78px; resize:vertical; }
+    .email-order { width:100%; min-height:48px; margin-top:17px; border:0; background:var(--red); color:#fff; font:inherit; font-size:10px; font-weight:700; letter-spacing:1.25px; text-transform:uppercase; cursor:pointer; }
+    .email-order:disabled { opacity:.45; cursor:not-allowed; }
+    .email-help { margin:10px 0 0; color:#777379; font-size:10px; line-height:1.5; text-align:center; }
     footer { padding:31px 5.5vw; display:flex; justify-content:space-between; gap:20px; border-top:1px solid #29292d; color:#625f64; font-size:9px; letter-spacing:1.2px; text-transform:uppercase; }
-    @media (max-width:850px) { .topbar { display:block; padding:0; } .home { display:block; padding:18px 20px 14px; border-bottom:1px solid rgba(255,255,255,.06); } .category-nav { justify-content:flex-start; gap:24px; padding:0 20px; } .category-nav a { padding:17px 0 15px; } .hero { padding:76px 20px 58px; } .catalog { padding:48px 20px 78px; } .toolbar { align-items:flex-start; flex-direction:column; } .search { width:100%; } .products { grid-template-columns:repeat(2,minmax(0,1fr)); gap:30px 12px; } .source-link { opacity:1; } footer { padding:28px 20px; display:block; line-height:1.8; } }
-    @media (max-width:460px) { h1 { font-size:50px; } .products { grid-template-columns:1fr; } }
+    @media (max-width:850px) { .topbar { display:block; padding:0; } .nav-actions { border-top:1px solid rgba(255,255,255,.06); } .home { display:block; padding:18px 20px 14px; border-bottom:1px solid rgba(255,255,255,.06); } .category-nav { flex:1; justify-content:flex-start; gap:24px; padding:0 0 0 20px; } .category-nav a { padding:17px 0 15px; } .cart-trigger { margin-right:20px; } .hero { padding:76px 20px 58px; } .catalog { padding:48px 20px 78px; } .toolbar { align-items:flex-start; flex-direction:column; } .search { width:100%; } .products { grid-template-columns:repeat(2,minmax(0,1fr)); gap:30px 12px; } .source-link { opacity:1; } footer { padding:28px 20px; display:block; line-height:1.8; } }
+    @media (max-width:460px) { h1 { font-size:50px; } .products { grid-template-columns:1fr; } .category-nav { gap:18px; } .category-nav a { font-size:9px; } .cart-trigger { padding:0 9px; } .form-grid { grid-template-columns:1fr; } .field.full { grid-column:auto; } }
   </style>
 </head>
 <body>
   <header class="topbar">
     <a class="home" href="index.html"><span>←</span> Hikarmory</a>
-    <nav class="category-nav" aria-label="Shop categories">
-      <a id="gunplaNav" href="category.html">Gunpla Kits</a>
-      <a id="figureNav" href="category.html?catalog=figure">Figure</a>
-      <a id="beybladeNav" href="category.html?catalog=beyblade">Beyblade</a>
-    </nav>
+    <div class="nav-actions">
+      <nav class="category-nav" aria-label="Shop categories">
+        <a id="gunplaNav" href="category.html">Gunpla Kits</a>
+        <a id="figureNav" href="category.html?catalog=figure">Figure</a>
+        <a id="beybladeNav" href="category.html?catalog=beyblade">Beyblade</a>
+      </nav>
+      <button class="cart-trigger" id="cartTrigger" type="button" aria-haspopup="dialog">Cart <span class="cart-count" id="cartCount">0</span></button>
+    </div>
   </header>
   <main>
     <section class="hero">
@@ -83,6 +123,27 @@
     </section>
   </main>
   <footer><span>Hikarmory Toy Shop · Bacolod City</span><span>Imported from Japan · Authentic only</span></footer>
+  <div class="cart-overlay" id="cartOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-labelledby="cartTitle" aria-hidden="true">
+    <div class="cart-head"><h2 id="cartTitle">Your cart</h2><button class="cart-close" id="cartClose" type="button" aria-label="Close cart">×</button></div>
+    <div class="cart-body">
+      <div id="cartItems"></div>
+      <div class="cart-summary"><span>Estimated total</span><span id="cartTotal">$0.00</span></div>
+      <form class="checkout" id="checkoutForm">
+        <h3>Email your order request</h3>
+        <p class="checkout-note">No payment is taken here. Hikarmory will confirm availability, delivery and the final total by email.</p>
+        <div class="form-grid">
+          <div class="field"><label for="customerName">Name</label><input id="customerName" name="name" autocomplete="name" required></div>
+          <div class="field"><label for="customerEmail">Email</label><input id="customerEmail" name="email" type="email" autocomplete="email" required></div>
+          <div class="field full"><label for="customerPhone">Phone (optional)</label><input id="customerPhone" name="phone" type="tel" autocomplete="tel"></div>
+          <div class="field full"><label for="deliveryMethod">Delivery method</label><select id="deliveryMethod" name="delivery"><option>Nationwide courier delivery</option><option>Mandalagan store pickup</option></select></div>
+          <div class="field full"><label for="orderNotes">Notes (optional)</label><textarea id="orderNotes" name="notes" placeholder="Quantity details, pickup date, city or questions"></textarea></div>
+        </div>
+        <button class="email-order" id="emailOrder" type="submit" disabled>Review order in email app</button>
+        <p class="email-help">Your email app will open with the order addressed to Hikarmory. Review it, then press Send.</p>
+      </form>
+    </div>
+  </aside>
   <script>
     const catalogs = {
       gunpla: {
@@ -105,7 +166,7 @@
       },
       beyblade: {
         title:'Beyblade',
-        intro:'Beyblade X Unique, Basic and Custom Line releases from Takara Tomy. Prices are listed in USD at twice the supplied Japanese retail price.',
+        intro:'Authentic Takara Tomy Beyblade X releases across the Unique, Basic and Custom Lines. Prices are shown in USD.',
         heading:'Beyblade X Catalog',
         data:'beyblade-products.json',
         searchPlaceholder:'Search Beyblade',
@@ -132,7 +193,33 @@
     const count = document.querySelector('#productCount');
     const search = document.querySelector('#productSearch');
     const stockOnly = document.querySelector('#stockOnly');
+    const cartDrawer = document.querySelector('#cartDrawer');
+    const cartOverlay = document.querySelector('#cartOverlay');
+    const cartItems = document.querySelector('#cartItems');
+    const cartCount = document.querySelector('#cartCount');
+    const cartTotal = document.querySelector('#cartTotal');
+    const emailOrder = document.querySelector('#emailOrder');
+    const CART_KEY = `hikarmory_cart_${catalogKey}`;
     let products = [];
+    let cart = (() => { try { const saved = JSON.parse(localStorage.getItem(CART_KEY) || '{}'); return saved && typeof saved === 'object' && !Array.isArray(saved) ? saved : {}; } catch { return {}; } })();
+    const formatPrice = value => {
+      const currency = current.currency || 'PHP';
+      const locale = current.locale || 'en-PH';
+      return currency === 'PHP' ? `PHP ${Number(value).toLocaleString(locale)}` : new Intl.NumberFormat(locale, { style:'currency', currency, minimumFractionDigits:2 }).format(Number(value));
+    };
+    const saveCart = () => localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    const cartEntries = () => Object.entries(cart).map(([id, quantity]) => ({ product:products.find(item => item.id === id), quantity:Number(quantity) })).filter(item => item.product && item.quantity > 0);
+    const renderCart = () => {
+      const entries = cartEntries();
+      const itemCount = entries.reduce((sum, item) => sum + item.quantity, 0);
+      const total = entries.reduce((sum, item) => sum + Number(item.product.price || 0) * item.quantity, 0);
+      cartCount.textContent = itemCount;
+      cartTotal.textContent = formatPrice(total);
+      emailOrder.disabled = entries.length === 0;
+      cartItems.innerHTML = entries.length ? entries.map(({ product, quantity }) => `<div class="cart-item"><img src="${escapeHTML(product.image)}" alt=""><div><h3>${escapeHTML(product.name)}</h3><div class="cart-item-price">${formatPrice(product.price)} each</div><div class="quantity"><button type="button" data-cart-action="decrease" data-id="${escapeHTML(product.id)}" aria-label="Decrease quantity of ${escapeHTML(product.name)}">−</button><span>${quantity}</span><button type="button" data-cart-action="increase" data-id="${escapeHTML(product.id)}" aria-label="Increase quantity of ${escapeHTML(product.name)}">+</button></div></div><button class="remove-item" type="button" data-cart-action="remove" data-id="${escapeHTML(product.id)}" aria-label="Remove ${escapeHTML(product.name)}">×</button></div>`).join('') : '<div class="cart-empty">Your cart is empty.<br>Add a product to begin an order request.</div>';
+    };
+    const openCart = () => { cartDrawer.classList.add('open'); cartOverlay.classList.add('open'); cartDrawer.setAttribute('aria-hidden','false'); document.body.classList.add('cart-open'); document.querySelector('#cartClose').focus(); };
+    const closeCart = () => { cartDrawer.classList.remove('open'); cartOverlay.classList.remove('open'); cartDrawer.setAttribute('aria-hidden','true'); document.body.classList.remove('cart-open'); document.querySelector('#cartTrigger').focus(); };
     const render = () => {
       const term = search.value.trim().toLocaleLowerCase();
       const visible = products.filter(product => (current.showStock === false || !stockOnly.checked || product.stock > 0) && (!term || `${product.name} ${product.japaneseName} ${product.series}`.toLocaleLowerCase().includes(term)));
@@ -142,15 +229,32 @@
         const hasStock = current.showStock !== false;
         const stockText = product.stock > 1 ? `${product.stock} units available` : product.stock === 1 ? '1 unit available' : 'Sold out';
         const stockClass = product.stock === 0 ? 'sold' : product.stock <= 2 ? 'low' : '';
-        const currency = current.currency || 'PHP';
-        const locale = current.locale || 'en-PH';
-        const price = product.price == null ? 'Price unavailable' : currency === 'PHP' ? `PHP ${Number(product.price).toLocaleString(locale)}` : new Intl.NumberFormat(locale, { style:'currency', currency, minimumFractionDigits:2 }).format(Number(product.price));
-        return `<article class="product ${hasStock && !product.stock ? 'sold-out' : ''}">${product.imageSource ? `<a class="source-link" href="${escapeHTML(product.imageSource)}" target="_blank" rel="noreferrer" aria-label="View image source for ${escapeHTML(product.name)}">↗</a>` : ''}<div class="product-image"><img src="${escapeHTML(product.image)}" alt="${escapeHTML(product.name)}" loading="lazy"></div><div class="product-info"><div><h3>${escapeHTML(product.name)}</h3><p class="product-brand">${escapeHTML(product.series)}</p></div><span class="price">${price}</span>${hasStock ? `<div class="stock ${stockClass}">${stockText}</div>` : ''}</div></article>`;
+        const price = product.price == null ? 'Price unavailable' : formatPrice(product.price);
+        return `<article class="product ${hasStock && !product.stock ? 'sold-out' : ''}">${product.imageSource ? `<a class="source-link" href="${escapeHTML(product.imageSource)}" target="_blank" rel="noreferrer" aria-label="View image source for ${escapeHTML(product.name)}">↗</a>` : ''}<div class="product-image"><img src="${escapeHTML(product.image)}" alt="${escapeHTML(product.name)}" loading="lazy"></div><div class="product-info"><div><h3>${escapeHTML(product.name)}</h3><p class="product-brand">${escapeHTML(product.series)}</p></div><span class="price">${price}</span>${hasStock ? `<div class="stock ${stockClass}">${stockText}</div>` : ''}<button class="add-to-cart" type="button" data-add-to-cart="${escapeHTML(product.id)}" ${hasStock && !product.stock ? 'disabled' : ''}>${hasStock && !product.stock ? 'Sold out' : 'Add to cart'}</button></div></article>`;
       }).join('');
     };
     search.addEventListener('input', render);
     stockOnly.addEventListener('change', render);
-    fetch(current.data).then(response => { if (!response.ok) throw new Error('Product data unavailable'); return response.json(); }).then(data => { products = data; render(); }).catch(() => { count.textContent = 'Products unavailable'; grid.innerHTML = '<div class="empty"><div><div class="empty-mark">◇</div><h2>Catalog unavailable.</h2><p>Please try again shortly.</p></div></div>'; });
+    grid.addEventListener('click', event => { const button = event.target.closest('[data-add-to-cart]'); if (!button) return; const id = button.dataset.addToCart; cart[id] = Number(cart[id] || 0) + 1; saveCart(); renderCart(); openCart(); });
+    document.querySelector('#cartTrigger').addEventListener('click', openCart);
+    document.querySelector('#cartClose').addEventListener('click', closeCart);
+    cartOverlay.addEventListener('click', closeCart);
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && cartDrawer.classList.contains('open')) closeCart(); });
+    cartItems.addEventListener('click', event => { const button = event.target.closest('[data-cart-action]'); if (!button) return; const id = button.dataset.id; if (button.dataset.cartAction === 'increase') cart[id] = Number(cart[id] || 0) + 1; if (button.dataset.cartAction === 'decrease') cart[id] = Number(cart[id] || 0) - 1; if (button.dataset.cartAction === 'remove' || cart[id] <= 0) delete cart[id]; saveCart(); renderCart(); });
+    document.querySelector('#checkoutForm').addEventListener('submit', event => {
+      event.preventDefault();
+      if (!event.currentTarget.reportValidity()) return;
+      const entries = cartEntries();
+      if (!entries.length) return;
+      const data = new FormData(event.currentTarget);
+      const currency = current.currency || 'PHP';
+      const total = entries.reduce((sum, item) => sum + Number(item.product.price || 0) * item.quantity, 0);
+      const lines = entries.map(({ product, quantity }) => `- ${product.name}\n  Qty: ${quantity} × ${formatPrice(product.price)} = ${formatPrice(Number(product.price || 0) * quantity)}`);
+      const body = [`Hello Hikarmory,`, ``, `I would like to request the following order:`, ``, ...lines, ``, `Estimated total: ${formatPrice(total)} ${currency}`, ``, `Customer name: ${data.get('name')}`, `Customer email: ${data.get('email')}`, `Phone: ${data.get('phone') || 'Not provided'}`, `Delivery method: ${data.get('delivery')}`, `Notes: ${data.get('notes') || 'None'}`, ``, `Please confirm availability, delivery costs and the final total. Thank you.`].join('\n');
+      const subject = `Hikarmory order request — ${data.get('name')}`;
+      window.location.href = `mailto:yoichi.maegawa@gmail.com?cc=${encodeURIComponent('maegawajehian@gmail.com')}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
+    fetch(current.data).then(response => { if (!response.ok) throw new Error('Product data unavailable'); return response.json(); }).then(data => { products = data; render(); renderCart(); }).catch(() => { count.textContent = 'Products unavailable'; grid.innerHTML = '<div class="empty"><div><div class="empty-mark">◇</div><h2>Catalog unavailable.</h2><p>Please try again shortly.</p></div></div>'; renderCart(); });
   </script>
 </body>
 </html>
