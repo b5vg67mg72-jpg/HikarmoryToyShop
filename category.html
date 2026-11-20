@@ -139,8 +139,8 @@
           <div class="field full"><label for="deliveryMethod">Delivery method</label><select id="deliveryMethod" name="delivery"><option>Nationwide courier delivery</option><option>Mandalagan store pickup</option></select></div>
           <div class="field full"><label for="orderNotes">Notes (optional)</label><textarea id="orderNotes" name="notes" placeholder="Quantity details, pickup date, city or questions"></textarea></div>
         </div>
-        <button class="email-order" id="emailOrder" type="submit" disabled>Review order in email app</button>
-        <p class="email-help">Your email app will open with the order addressed to Hikarmory. Review it, then press Send.</p>
+        <button class="email-order" id="emailOrder" type="submit" disabled>Review order in Gmail</button>
+        <p class="email-help">Gmail will open with the order addressed to Hikarmory. Review it, then press Send.</p>
       </form>
     </div>
   </aside>
@@ -252,7 +252,16 @@
       const lines = entries.map(({ product, quantity }) => `- ${product.name}\n  Qty: ${quantity} × ${formatPrice(product.price)} = ${formatPrice(Number(product.price || 0) * quantity)}`);
       const body = [`Hello Hikarmory,`, ``, `I would like to request the following order:`, ``, ...lines, ``, `Estimated total: ${formatPrice(total)} ${currency}`, ``, `Customer name: ${data.get('name')}`, `Customer email: ${data.get('email')}`, `Phone: ${data.get('phone') || 'Not provided'}`, `Delivery method: ${data.get('delivery')}`, `Notes: ${data.get('notes') || 'None'}`, ``, `Please confirm availability, delivery costs and the final total. Thank you.`].join('\n');
       const subject = `Hikarmory order request — ${data.get('name')}`;
-      window.location.href = `mailto:yoichi.maegawa@gmail.com?cc=${encodeURIComponent('maegawajehian@gmail.com')}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      const gmailURL = new URL('https://mail.google.com/mail/');
+      gmailURL.search = new URLSearchParams({
+        view:'cm',
+        fs:'1',
+        to:'yoichi.maegawa@gmail.com',
+        cc:'maegawajehian@gmail.com',
+        su:subject,
+        body
+      });
+      window.location.assign(gmailURL);
     });
     fetch(current.data).then(response => { if (!response.ok) throw new Error('Product data unavailable'); return response.json(); }).then(data => { products = data; render(); renderCart(); }).catch(() => { count.textContent = 'Products unavailable'; grid.innerHTML = '<div class="empty"><div><div class="empty-mark">◇</div><h2>Catalog unavailable.</h2><p>Please try again shortly.</p></div></div>'; renderCart(); });
   </script>
