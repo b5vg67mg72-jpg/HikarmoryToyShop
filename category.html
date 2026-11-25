@@ -131,6 +131,7 @@
     </section>
     <section class="catalog" aria-labelledby="catalogTitle">
       <div class="catalog-head"><h2 id="catalogTitle">Plastic Model Kits</h2><span class="count" id="productCount">Loading products</span></div>
+      <p><a href="search.html">Search all collections →</a></p>
       <div class="toolbar"><input class="search" id="productSearch" type="search" placeholder="Search model kits" aria-label="Search model kits"><label class="stock-filter"><input id="stockOnly" type="checkbox"> In stock only</label></div>
       <div class="products" id="productGrid"></div>
     </section>
@@ -224,6 +225,7 @@
     const grid = document.querySelector('#productGrid');
     const count = document.querySelector('#productCount');
     const search = document.querySelector('#productSearch');
+    search.value = new URLSearchParams(location.search).get('q') || '';
     const stockOnly = document.querySelector('#stockOnly');
     const cartDrawer = document.querySelector('#cartDrawer');
     const cartOverlay = document.querySelector('#cartOverlay');
@@ -276,7 +278,7 @@
     };
     const render = () => {
       const term = search.value.trim().toLocaleLowerCase();
-      const visible = products.filter(product => (current.showStock === false || !stockOnly.checked || product.stock > 0) && (!term || `${product.name} ${product.japaneseName} ${product.series}`.toLocaleLowerCase().includes(term)));
+      const visible = products.filter(product => (current.showStock === false || !stockOnly.checked || product.stock > 0) && (!term || `${product.name} ${product.japaneseName || ''} ${product.series || ''} ${product.sku || ''}`.toLocaleLowerCase().includes(term)));
       count.textContent = `${visible.length} of ${products.length} products`;
       if (!visible.length) { grid.innerHTML = `<div class="empty"><div><div class="empty-mark">◇</div><h2>${current.emptyTitle}</h2><p>Try a different search term or show sold-out products.</p></div></div>`; return; }
       grid.innerHTML = visible.map(product => {
@@ -285,7 +287,7 @@
         const stockClass = product.stock === 0 ? 'sold' : product.stock <= 2 ? 'low' : '';
         const price = product.price == null ? 'Price unavailable' : formatPrice(product.price);
         const action = hasStock && !product.stock ? `<button class="restock-request" type="button" data-restock-request="${escapeHTML(product.id)}">Request restock</button>` : `<button class="add-to-cart" type="button" data-add-to-cart="${escapeHTML(product.id)}">Add to cart</button>`;
-        return `<article class="product ${hasStock && !product.stock ? 'sold-out' : ''}">${product.imageSource ? `<a class="source-link" href="${escapeHTML(product.imageSource)}" target="_blank" rel="noreferrer" aria-label="View image source for ${escapeHTML(product.name)}">↗</a>` : ''}<div class="product-image"><img src="${escapeHTML(product.image)}?v=20261123c" alt="${escapeHTML(product.name)}" loading="lazy"></div><div class="product-info"><div><h3>${escapeHTML(product.name)}</h3><p class="product-brand">${escapeHTML(product.series)}</p></div><span class="price">${price}</span>${hasStock ? `<div class="stock ${stockClass}">${stockText}</div>` : ''}${action}</div></article>`;
+        return `<article class="product ${hasStock && !product.stock ? 'sold-out' : ''}">${product.imageSource ? `<a class="source-link" href="${escapeHTML(product.imageSource)}" target="_blank" rel="noreferrer" aria-label="View image source for ${escapeHTML(product.name)}">↗</a>` : ''}<button type="button" class="product-image" data-enlarge aria-label="Enlarge ${escapeHTML(product.name)}"><img src="${escapeHTML(product.image)}?v=20261123c" alt="${escapeHTML(product.name)}" loading="lazy"></button><div class="product-info"><div><h3>${escapeHTML(product.name)}</h3><p class="product-brand">${escapeHTML(product.series)}</p></div><span class="price">${price}</span>${hasStock ? `<div class="stock ${stockClass}">${stockText}</div>` : ''}${action}</div></article>`;
       }).join('');
     };
     search.addEventListener('input', render);
@@ -348,5 +350,6 @@
     });
     fetch(current.data).then(response => { if (!response.ok) throw new Error('Product data unavailable'); return response.json(); }).then(data => { products = data; render(); renderCart(); }).catch(() => { count.textContent = 'Products unavailable'; grid.innerHTML = '<div class="empty"><div><div class="empty-mark">◇</div><h2>Catalog unavailable.</h2><p>Please try again shortly.</p></div></div>'; renderCart(); });
   </script>
+<script src="image-viewer.js"></script>
 </body>
 </html>

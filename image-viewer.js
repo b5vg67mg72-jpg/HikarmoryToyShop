@@ -1,0 +1,30 @@
+(() => {
+  const style = document.createElement('style');
+  style.textContent = `button.product-image{width:100%;padding:0;cursor:zoom-in;position:relative}button.product-image::after{content:'＋ View photo';position:absolute;bottom:10px;right:10px;background:#111d;color:#fff;padding:8px 10px;font:12px Arial,sans-serif}.photo-viewer{width:min(1100px,96vw);max-width:96vw;max-height:94dvh;padding:18px;border:1px solid #555;background:#141416;color:#f5f2ed}.photo-viewer::backdrop{background:#000d}.photo-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:12px}.photo-head h2{margin:0;font:600 16px Arial,sans-serif}.photo-close{flex-shrink:0;width:44px;height:44px;border:1px solid #777;background:transparent;color:white;font-size:24px;cursor:pointer}.photo-stage{overflow:auto;max-height:72dvh;background:#f2f0eb;text-align:center}.photo-stage img{display:block;max-width:100%;max-height:72dvh;object-fit:contain;margin:auto;cursor:zoom-in}.photo-stage img.zoomed{max-width:none;max-height:none;width:180%;cursor:zoom-out}.photo-help{margin:12px 0 0;font:12px Arial,sans-serif;color:#b4b0aa}body.photo-open{overflow:hidden}`;
+  document.head.append(style);
+  const viewer = document.createElement('dialog');
+  viewer.className = 'photo-viewer';
+  viewer.setAttribute('aria-labelledby', 'photoTitle');
+  viewer.innerHTML = '<div class="photo-head"><h2 id="photoTitle"></h2><button class="photo-close" type="button" aria-label="Close photo">×</button></div><div class="photo-stage"><img alt=""></div><p class="photo-help">Tap the photo to zoom in or out. Press Escape or × to close.</p>';
+  document.body.append(viewer);
+  const photo = viewer.querySelector('img');
+  let trigger;
+  document.addEventListener('click', event => {
+    const button = event.target.closest('[data-enlarge]');
+    if (!button) return;
+    const source = button.querySelector('img');
+    if (!source) return;
+    trigger = button;
+    photo.src = source.currentSrc || source.src;
+    photo.alt = source.alt;
+    photo.classList.remove('zoomed');
+    viewer.querySelector('h2').textContent = source.alt;
+    viewer.showModal();
+    document.body.classList.add('photo-open');
+    viewer.querySelector('button').focus();
+  });
+  photo.addEventListener('click', () => photo.classList.toggle('zoomed'));
+  viewer.querySelector('button').addEventListener('click', () => viewer.close());
+  viewer.addEventListener('click', event => { if (event.target === viewer) { const r = viewer.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) viewer.close(); } });
+  viewer.addEventListener('close', () => { document.body.classList.remove('photo-open'); photo.removeAttribute('src'); trigger?.focus(); });
+})();
